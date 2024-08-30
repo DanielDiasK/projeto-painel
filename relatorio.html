@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel de Relatórios</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Custom styles */
+    body {
+      background-color: #140f0b;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 250px;
+      background-color: #0b1c2f;
+      padding-top: 20px;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      z-index: 1000;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+    .nav-link {
+      color: #fff !important;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .nav-link:hover {
+      background-color: #3a3028 !important;
+    }
+    .active {
+      background-color: #0c21ff !important;
+    }
+.card {
+    border-radius: 20px;
+    background-color: #141614;
+    border: 3px solid #002d4a;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+    .card:hover {
+      border-color: #fff;
+      transform: translateY(-5px);
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      margin-left: 20px;
+      margin-bottom: 20px;
+    }
+    .profile img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .profile p {
+      margin: 0;
+      font-size: 18px;
+    }
+    .chart-container {
+      position: relative;
+      height: 400px;
+      width: 100%;
+    }
+    .card-deck {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-deck .card {
+      flex: 1;
+      margin: 0 10px;
+    }
+    /* Estilos para dispositivos móveis */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .content {
+        margin-left: 0;
+      }
+      .show-sidebar {
+        display: block !important;
+      }
+      #closeMenuBtn {
+        display: none;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      #closeMenuBtn.show-close {
+        display: block;
+      }
+      .card-deck {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="profile">
+    <img src="https://via.placeholder.com/150" alt="Profile Picture">
+    <p>Olá, Daniel</p>
+  </div>
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a class="nav-link" href="index.php"><i class="fas fa-user-plus"></i> Registrar Cliente</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="faturamento.php"><i class="fas fa-file-invoice-dollar"></i> Faturamento</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link active" href="relatorio.php"><i class="fas fa-chart-pie"></i> Relatórios</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Configurações</a>
+    </li>
+  </ul>
+</div>
+
+<!-- Mobile Menu Button -->
+<button class="btn btn-outline-light d-block d-md-none" id="mobileMenuBtn">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Close Menu Button (only visible when menu is open on mobile) -->
+<i class="fas fa-times" id="closeMenuBtn"></i>
+
+<!-- Page content -->
+<div class="content">
+  <h2>Painel de Relatórios</h2>
+
+  <!-- Card deck com Totais -->
+  <div class="card-deck">
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-users fa-3x mb-3"></i>
+        <h5 class="card-title">Total de Clientes</h5>
+        <p class="card-text">150</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body text-center">
+        <i class="fas fa-dollar-sign fa-3x mb-3"></i>
+        <h5 class="card-title">Total de Faturamento</h5>
+        <p class="card-text">R$ 500.000,00</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card com Gráficos -->
+  <div class="card-deck">
+    <!-- Gráfico de Pizza -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fas fa-chart-pie"></i> Lucro por Serviço</h5>
+        <div class="chart-container">
+          <canvas id="profitChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- Gráfico de Barras para Total de Clientes -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title"><i class="fas fa-chart-bar"></i> Total de Clientes</h5>
+        <div class="chart-container">
+          <canvas id="clientChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS, jQuery and Chart.js -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  // Mostrar/ocultar menu lateral em dispositivos móveis
+  $('#mobileMenuBtn').click(function() {
+    $('.sidebar').toggleClass('show-sidebar');
+    $('#closeMenuBtn').toggleClass('show-close');
+  });
+
+  // Fechar menu ao clicar no botão "X"
+  $('#closeMenuBtn').click(function() {
+    $('.sidebar').removeClass('show-sidebar');
+    $(this).removeClass('show-close');
+  });
+
+  // Configuração do gráfico de pizza para Lucro por Serviço
+  var ctxProfit = document.getElementById('profitChart').getContext('2d');
+  var profitChart = new Chart(ctxProfit, {
+    type: 'pie',
+    data: {
+      labels: ['Construção Residencial', 'Reformas', 'Construção Comercial'],
+      datasets: [{
+        label: 'Lucro por Serviço (R$)',
+        data: [200000, 150000, 150000],
+        backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+        borderColor: ['#fff', '#fff', '#fff'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true
+    }
+  });
+
+  // Configuração do gráfico de barras para Total de Clientes
+  var ctxClient = document.getElementById('clientChart').getContext('2d');
+  var clientChart = new Chart(ctxClient, {
+    type: 'bar',
+    data: {
+      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto'],
+      datasets: [{
+        label: 'Clientes (Unidades)',
+        data: [10, 20, 15, 25, 30, 40, 35, 50],
+        backgroundColor: 'rgba(0, 123, 255, 0.8)',
+        borderColor: 'rgba(0, 123, 255, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          beginAtZero: true
+        },
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
